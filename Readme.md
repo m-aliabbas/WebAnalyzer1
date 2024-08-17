@@ -22,38 +22,38 @@ Follow these instructions to set up and run Proofly on your local machine.
 
 1. **Clone the Repository**
 
-   \`\`\`bash
+   ``` 
    git clone https://github.com/yourusername/proofly.git
    cd proofly
-   \`\`\`
+   ```
 
 2. **Install Backend Dependencies**
 
    Navigate to the root directory and install the necessary Python packages:
 
-   \`\`\`bash
+   ``` 
    pip install -r requirements.txt
-   \`\`\`
+   ```
 
 3. **Install Frontend Dependencies**
 
    Navigate to the UI directory:
 
-   \`\`\`bash
+   ```bash
    cd UI/proofly
    npm install
-   \`\`\`
+   ```
 
 ### Configuration
 
 1. **Environment Variables**
 
-   Add your OpenAI and Firecrawl API keys to the \`.env\` file located inside the \`src\` folder. Here’s a sample \`.env\` file:
+   Add your OpenAI and Firecrawl API keys to the `.env` file located inside the `src` folder. Here’s a sample `.env` file:
 
-   \`\`\`bash
+   ```bash
    OPENAI_API_KEY=your_openai_api_key
    FIRECRAWL_API_KEY=your_firecrawl_api_key
-   \`\`\`
+   ```
 
 ### Running the Application
 
@@ -61,26 +61,26 @@ Follow these instructions to set up and run Proofly on your local machine.
 
    Navigate to the project’s root directory and start the FastAPI server:
 
-   \`\`\`bash
+   ```
    python server.py
-   \`\`\`
+   ```
 
 2. **Start the Frontend**
 
    Navigate to the UI directory and start the React frontend:
 
-   \`\`\`bash
+    ```
    cd UI/proofly
    npm start
-   \`\`\`
+   ```
 
 3. **Access the Application**
 
    Once both the server and UI are running, you can access Proofly by opening your web browser and navigating to:
 
-   \`\`\`
+   ```
    http://localhost:3000
-   \`\`\`
+   ```
 
 ## Usage
 
