@@ -98,8 +98,9 @@ const SearchPage = () => {
             onChange={(e) => setAction(e.target.value)} 
             className="action-dropdown"
           >
-            <option value="Crawl">Crawl</option>
             <option value="Scrape">Scrape</option>
+            <option value="Crawl">Crawl</option>
+            
           </select>
         </div>
 
