@@ -1,0 +1,9 @@
+langchain==0.2.11
+langchain-community==0.2.10
+langchain-core==0.2.24
+langchain-experimental==0.0.63
+langchain-groq==0.1.2
+langchain-openai==0.1.19
+langchain-text-splitters==0.2.2
+langcodes==3.3.0
+langsmith==0.1.82
