@@ -1,0 +1,72 @@
+.app {
+  display: flex;
+}
+body{
+  background-image: url(../public/gradient.png);
+  background-size: cover;
+}
+
+.content {
+  margin-left: 300px; /* Offset for sidebar width */
+  padding: 20px;
+  flex-grow: 1;
+}
+.app {
+  display: flex;
+  height: 100vh;
+}
+
+.content {
+  flex-grow: 1;
+  padding: 20px;
+  transition: margin-left 0.3s;
+  transition: margin-right 0.3s;
+}
+
+.content-open {
+  margin-left: 300px; /* Adjust for sidebar width */
+  margin-right: 40px;
+}
+
+.content-closed {
+  margin-left: 30px; /* Adjust for sidebar button width */
+  margin-right: 30px;
+}
+
+.button-open {
+  background: none;
+  border: none;
+  background-color: #48627a;
+  border-radius: 50%;
+  color: rgb(255, 255, 255);
+  cursor: pointer;
+  font-size: 14px;
+  padding: 10px;
+  padding-left: 24px;
+  padding-right: 6px;
+  margin-bottom: 20px;
+  position: absolute;
+  left: 240px;
+  top:48%;
+  z-index: 1;
+  transition: left 0.3s;
+}
+
+.button-closed{
+  background: none;
+  background-color:#48627a;
+  border-radius: 50%;
+  padding: 8px 10px;
+  border: none;
+  color: rgb(255, 255, 255);
+  cursor: pointer;
+  font-size: 14px;
+  padding: 10px;
+  padding-left: 24px;
+  padding-right: 6px;
+  margin-bottom: 20px;
+  position: absolute;
+  left: -18px;
+  top: 49%;
+  transition: left 0.3s; 
+}
