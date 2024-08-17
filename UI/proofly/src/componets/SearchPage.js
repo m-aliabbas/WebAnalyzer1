@@ -13,7 +13,7 @@ const SearchPage = () => {
     "leader", "leaders", "service", "implantologist"
   ]);
   const [searchQuery, setSearchQuery] = useState('');
-  const [action, setAction] = useState('Crawl');
+  const [action, setAction] = useState('Scrape');
 
   const handleTagRemove = (index) => {
     setTags(tags.filter((_, i) => i !== index));
