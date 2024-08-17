@@ -238,6 +238,8 @@ def get_child_docs_by_id(doc_id):
     result = processed_pages_collection.find(query)
     return [doc for doc in result]
 
+
+
 def get_parent_url_from_id(doc_id):
     query = {'_id': ObjectId(doc_id)}
     result = parent_docs_collection.find_one(query)
@@ -294,7 +296,10 @@ def update_document(data):
         return f"Document with Id: {data['id']} updated successfully to status: {data['status']}"
     
 
-
+def get_child_by_id(doc_id):
+    query = {'_id': ObjectId(doc_id)}
+    result = processed_pages_collection.find_one(query)
+    return result
 def get_id(doc_id):
     id = ObjectId(doc_id)
     return id
