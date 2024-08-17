@@ -4,7 +4,9 @@ import 'react-toastify/dist/ReactToastify.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTimes, faSync } from '@fortawesome/free-solid-svg-icons';
 import { Button, TextField } from '@mui/material';
+import { API_BASE_URL } from './Config'; // Import the base URL
 import './searchPage.css';
+
 
 const WordCorrection = () => {
   const [tags, setTags] = useState([
@@ -43,7 +45,7 @@ const WordCorrection = () => {
     formData.append('tags', JSON.stringify(tags));
 
     try {
-      const response = await fetch('http://127.0.0.1:8000/correct/', {
+      const response = await fetch(`${API_BASE_URL}/correct/`, {
         method: 'POST',
         body: formData,
       });

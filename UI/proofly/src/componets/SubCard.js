@@ -5,6 +5,7 @@ import DownloadIcon from '@mui/icons-material/Download';
 import PageviewIcon from '@mui/icons-material/Pageview';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import { API_BASE_URL } from './Config'; // Import the base URL
 
 const StatusChip = styled(Chip)(({ status }) => ({
   backgroundColor: status === 'done' ? 'green' : status === 'in progress' ? 'blue' : 'red',
@@ -20,7 +21,7 @@ const SubCard = ({ id, title, progress, description }) => {
   const handleDownloadClick = async () => {
     try {
       const response = await axios.post(
-        'http://127.0.0.1:8000/get_pdf_page/',
+        `${API_BASE_URL}/get_pdf_page/`, // Updated to use API_BASE_URL
         { ids: id },
         { responseType: 'blob' } // This is important to handle binary data
       );

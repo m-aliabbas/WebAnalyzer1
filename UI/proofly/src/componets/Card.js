@@ -6,6 +6,7 @@ import VisibilityIcon from '@mui/icons-material/Visibility';
 import DeleteIcon from '@mui/icons-material/Delete';
 import DownloadIcon from '@mui/icons-material/Download';
 import axios from 'axios';
+import { API_BASE_URL } from './Config'; 
 
 const StatusChip = styled(Chip)(({ status }) => ({
   backgroundColor: status === 'done' ? 'green' : status === 'in progress' ? 'blue' : 'red',
@@ -48,7 +49,7 @@ const Card = ({ id, title, progress, tags, onDelete, halt_status }) => {
   const handleDeleteClick = async () => {
     if (window.confirm('Are you sure you want to delete this card?')) {
       try {
-        const response = await axios.post('http://127.0.0.1:8000/delete_doc/', {
+        const response = await axios.post(`${API_BASE_URL}/delete_doc/`, {
           ids: id,
         });
         alert(response.data.message || 'Card deleted successfully!');
@@ -62,7 +63,7 @@ const Card = ({ id, title, progress, tags, onDelete, halt_status }) => {
 
   const handleHaltToggle = async () => {
     try {
-      const apiUrl = isHalted ? 'http://127.0.0.1:8000/unhalt/' : 'http://127.0.0.1:8000/halt/';
+      const apiUrl = isHalted ? `${API_BASE_URL}/unhalt/` : `${API_BASE_URL}/halt/`;
       const response = await axios.post(apiUrl, { url: title });
       setIsHalted(!isHalted);
       alert(response.data.message || "Operation completed successfully!");
@@ -74,7 +75,7 @@ const Card = ({ id, title, progress, tags, onDelete, halt_status }) => {
 
   const handleDownload = async () => {
     try {
-      const response = await axios.post('http://127.0.0.1:8000/get_multipage_pdf/', { ids: id }, {
+      const response = await axios.post(`${API_BASE_URL}/get_multipage_pdf/`, { ids: id }, {
         responseType: 'blob', // Important to specify this to handle binary data
       });
   

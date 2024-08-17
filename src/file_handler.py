@@ -4,6 +4,10 @@ import os
 
 def handle_files(file_path, option='crawl', max_pages=4, input_type="URL", caution_words=None):
     content = ''
+    base_name = os.path.basename(file_path)
+    upload_dir = './uploads'
+
+    file_path = os.path.join(upload_dir, base_name)
     # if word file
     if file_path.endswith('.docx') or file_path.endswith('.doc'):
         document = docx.Document(file_path)

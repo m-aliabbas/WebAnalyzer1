@@ -3,6 +3,7 @@ import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTimes, faSync } from '@fortawesome/free-solid-svg-icons';
+import { API_BASE_URL } from './Config'; // Import the base URL
 import './searchPage.css';
 
 const SearchPage = () => {
@@ -30,7 +31,7 @@ const SearchPage = () => {
 
   const handleSubmit = async () => {
     try {
-      const response = await fetch('http://127.0.0.1:8000/search/', {
+      const response = await fetch(`${API_BASE_URL}/search/`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

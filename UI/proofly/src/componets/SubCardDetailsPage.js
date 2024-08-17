@@ -23,6 +23,7 @@ import {
 import DownloadIcon from '@mui/icons-material/Download';
 import DeleteIcon from '@mui/icons-material/Delete';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+import { API_BASE_URL } from './Config'; // Import the base URL
 
 const SubCardDetailsPage = () => {
   const { subCardId } = useParams();
@@ -42,7 +43,7 @@ const SubCardDetailsPage = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await fetch(`http://127.0.0.1:8000/get_child_page_by_id/`, {
+        const response = await fetch(`${API_BASE_URL}/get_child_page_by_id/`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -93,7 +94,7 @@ const SubCardDetailsPage = () => {
 
   const handleDownloadWord = async () => {
     try {
-      const response = await fetch('http://127.0.0.1:8000/get_pdf_page/', {
+      const response = await fetch(`${API_BASE_URL}/get_pdf_page/`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -131,7 +132,7 @@ const SubCardDetailsPage = () => {
 
     try {
       console.log('Request body before sending:', requestBody); // Check the data here
-      const response = await fetch('http://127.0.0.1:8000/update_table_data', {
+      const response = await fetch(`${API_BASE_URL}/update_table_data`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
