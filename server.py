@@ -30,6 +30,9 @@ from src.db_driver import (
 import os
 import time
 import threading
+import certifi
+
+ca = certifi.where()
 
 app = FastAPI()
 

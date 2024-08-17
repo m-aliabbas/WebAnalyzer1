@@ -3,6 +3,10 @@ from pymongo.mongo_client import MongoClient
 from pymongo.server_api import ServerApi
 from bson.objectid import ObjectId
 from pymongo import ReturnDocument
+import certifi
+
+ca = certifi.where()
+
 # MongoDB connection URI
 uri = "mongodb+srv://deamersoftlab2013:misrial22@digimax.bh5xd.mongodb.net/?retryWrites=true&w=majority&appName=digimax"
 
