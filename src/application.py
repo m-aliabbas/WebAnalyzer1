@@ -25,7 +25,8 @@ from langchain_core.pydantic_v1 import BaseModel, Field, validator
 from langchain_openai import ChatOpenAI
 from typing import List
 import re
-from langchain_text_splitters import RecursiveCharacterTextSplitter
+from langchain_text_splitters import CharacterTextSplitter
+
 from dotenv import load_dotenv
 # from src.models import ResponseModel, SentenceParser
 from langchain.chains import LLMChain
@@ -207,10 +208,10 @@ def get_splited_text(text):
     Output:
         [Document(page_content='This is a sample text to be split.', metadata={}), ...]
     """
-    text_splitter = RecursiveCharacterTextSplitter(
-    # Set a really small chunk size, just to show.
-    chunk_size=8000,
-    chunk_overlap=100,
+    text_splitter = CharacterTextSplitter(
+    separator="\n",
+    chunk_size=10000,
+    chunk_overlap=200,
     length_function=len,
     is_separator_regex=False,
     )
