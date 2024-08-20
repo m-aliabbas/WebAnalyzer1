@@ -36,6 +36,7 @@ from dotenv import load_dotenv
 from urllib.parse import urlparse
 from src.db_driver import *
 from src.file_handler import handle_files
+from utils.utils import *
 #===============================================================================
 # Load environment variables
 load_dotenv()
@@ -253,7 +254,7 @@ def get_corrected_content(page_content):
         template="""
         You are a smart assistant.
         You will be given a page-long document.
-        You will return a list of sentences in the page.
+        You will return sentences or group of words. Each line contain a sentence or group of words.
         If there is any HTML content or non-textual content, you will remove it.
         First, you will clean the text by removing the images and links, and extract plain text.
         You will not expand any point or enhance anything. 
@@ -299,8 +300,9 @@ def reterive_split_text(url,mode,ignore_pages=[],max_pages=4,enable_db=False,id=
     for document in html_content:
         document_dict = {}
         chunk_list = []
-        plain_text = extract_plain_text_from_markdown(document.page_content)
-        plain_text = remove_all_repetitions(plain_text)
+        plain_text = preproces_content_new(document.page_content)
+        # plain_text = extract_plain_text_from_markdown(document.page_content)
+        # plain_text = remove_all_repetitions(plain_text)
         metadata = document.dict().get('metadata',{})
         print('='*20)
         print(metadata)
@@ -358,56 +360,6 @@ def get_base_url(url):
     base_url = f"{parsed_url.scheme}://{parsed_url.netloc}"
     return base_url
 
-def get_corrected_content(page_content):
-
-    """
-    Retrieves corrected content from a given page content.
-
-    Args:
-        page_content (str): The content of the page to be corrected.
-
-    Returns:
-        Union[str, dict]: The corrected content as a JSON object with a single key "sentences"
-        which contains a list of objects. Each object should have keys "originalContent" and
-        "correctedSentence". If the result is not a dictionary, it is returned as is.
-
-    Raises:
-        None
-
-    """
-
-    llm=ChatOpenAI(temperature=0.0, model_name="gpt-4o") 
-    
-
-    parser = PydanticOutputParser(pydantic_object=ResponseModel)
-
-    prompt = PromptTemplate(
-        template="""
-        You are a smart assistant.
-        You will be given a page-long document.
-        You will return a list of sentences in the page.
-        Break large sentences to multiple small sentences or peice of information i.e. group of words.
-        First, you will clean the text by removing the images and links, and extract plain text.
-        You will not expand any point or enhance anything. But break the long sentences into multiple sentences.
-        If sentence contain the social media or web development related things like cookies etc you will remove it.
-        Just return what is in the original text.
-        Provide the English UK version of sentences, performing both spelling and grammar checks.
-        Return the result as a JSON object with a single key "sentences" which contains a list of objects.
-        Each object should have keys "originalContent" and "correctedSentence".
-
-        \n\n{query}\n
-        """,
-        input_variables=["query"]
-    )
-
-    chain = LLMChain(llm=llm, prompt=prompt, output_parser=parser)
-
-    result = chain({"query": page_content})
-
-    if isinstance(result,dict):
-        result = result['text']
-        return result
-    return result
 
 
 
