@@ -7,7 +7,7 @@ import { API_BASE_URL } from './Config'; // Import the base URL
 const DashboardPage = () => {
   const [cards, setCards] = useState([]);
   const [page, setPage] = useState(1);
-  const cardsPerPage = 5;
+  const cardsPerPage = 10;
 
   useEffect(() => {
     const fetchCards = async () => {

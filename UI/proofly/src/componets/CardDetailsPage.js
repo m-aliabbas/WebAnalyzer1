@@ -23,7 +23,7 @@ const CardDetailsPage = () => {
   const [page, setPage] = useState(1);
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState('');
-  const cardsPerPage = 5;
+  const cardsPerPage = 10;
 
   useEffect(() => {
     // Fetch parent title and status
