@@ -43,8 +43,9 @@
 // }
 
 // export default App;
+
 import './App.css';
-import { BrowserRouter as Router, Routes, Route, Redirect } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowLeft, faArrowRight } from '@fortawesome/free-solid-svg-icons';
 
@@ -61,7 +62,7 @@ function PrivateRoute({ element: Component, isAuthenticated, ...rest }) {
   return (
     <Route
       {...rest}
-      element={isAuthenticated ? <Component /> : <Redirect to="/" />}
+      element={isAuthenticated ? <Component /> : <Navigate to="/" />}
     />
   );
 }
