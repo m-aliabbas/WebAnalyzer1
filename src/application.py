@@ -486,7 +486,7 @@ def get_corrected_highlights(temp_doc,caution_word_list=["Best", "Specialist", "
 
 
     df = pd.DataFrame(temp_sent_list)
-
+    print(df)
     filtered_df = df[df['highlighted'].str.contains('<b>')]
     filtered_df = normalize_and_filter(filtered_df,'highlighted')
     org_sentences = df['originalContent'].tolist()
