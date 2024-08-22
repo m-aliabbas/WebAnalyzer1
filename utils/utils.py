@@ -77,7 +77,7 @@ def get_text_str(html_content):
         
         out_text += ('-'*50)
         out_text += '\n'
-        out_text += elem.get_text(strip=True)
+        out_text += elem.get_text()
         out_text += '\n'
     return out_text
 
