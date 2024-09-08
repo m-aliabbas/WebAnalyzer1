@@ -10,6 +10,7 @@
 
 # ==============================================================================
 # Importing Library
+import time
 import datetime
 from langchain_community.document_loaders import FireCrawlLoader
 from langchain_community.document_loaders import Docx2txtLoader
@@ -26,7 +27,7 @@ from langchain_openai import ChatOpenAI
 from typing import List
 import re
 from langchain_text_splitters import CharacterTextSplitter
-
+import random
 from dotenv import load_dotenv
 # from src.models import ResponseModel, SentenceParser
 from langchain.chains import LLMChain
@@ -160,7 +161,7 @@ def extract_plain_text_from_markdown(markdown_content):
     Removes any extra whitespace and newlines by replacing multiple whitespace characters with a single space and stripping leading and trailing whitespace.
     """
     # Remove image tags (Markdown and HTML)
-    print(markdown_content)
+    # print(markdown_content)
     markdown_content = re.sub(r'!\[.*?\]\(.*?\)', '', markdown_content)
     markdown_content = re.sub(r'<img.*?>', '', markdown_content)
     
@@ -216,6 +217,7 @@ def get_splited_text(text):
     is_separator_regex=False,
     )
     texts = text_splitter.create_documents([text])
+
     return texts
 
 
@@ -273,7 +275,7 @@ def get_corrected_content(page_content):
     chain = LLMChain(llm=llm, prompt=prompt, output_parser=parser)
 
     result = chain({"query": page_content})
-
+    
     if isinstance(result,dict):
         result = result['text']
         return result
@@ -305,9 +307,9 @@ def reterive_split_text(url,mode,ignore_pages=[],max_pages=4,enable_db=False,id=
         # plain_text = extract_plain_text_from_markdown(document.page_content)
         # plain_text = remove_all_repetitions(plain_text)
         metadata = document.dict().get('metadata',{})
-        print('='*20)
-        print(metadata)
-        print('='*20)
+        # print('='*20)
+        # print(metadata)
+        # print('='*20)
 
         url = metadata.get('url','')
         if url == '':
@@ -362,25 +364,70 @@ def get_base_url(url):
     return base_url
 
 
+# def process_document(doc):
+#     """
+#     Corrects the grammar of text chunks in a single document using ThreadPoolExecutor.
 
+#     Args:
+#         doc (dict): A dictionary representing the document with 'url', 'title',
+#                     'page_content', and 'chunks'.
+
+#     Returns:
+#         dict: The updated document with corrected text chunks.
+#     """
+#     with concurrent.futures.ThreadPoolExecutor() as chunk_executor:
+#         chunks = doc['chunks']
+#         chunk_futures = {chunk_executor.submit(get_corrected_content, chunk): chunk for chunk in chunks}
+#         corrected_chunks = [future.result() for future in concurrent.futures.as_completed(chunk_futures)]
+#         doc['chunks_corrected'] = corrected_chunks
+#     return doc
 
 def process_document(doc):
     """
     Corrects the grammar of text chunks in a single document using ThreadPoolExecutor.
+    If a chunk takes more than 90 seconds to process, it is marked as an error.
 
     Args:
         doc (dict): A dictionary representing the document with 'url', 'title',
                     'page_content', and 'chunks'.
 
     Returns:
-        dict: The updated document with corrected text chunks.
+        dict: The updated document with corrected text chunks or error status.
     """
+    corrected_chunks = []
+    
     with concurrent.futures.ThreadPoolExecutor() as chunk_executor:
+        # print(doc)
         chunks = doc['chunks']
         chunk_futures = {chunk_executor.submit(get_corrected_content, chunk): chunk for chunk in chunks}
-        corrected_chunks = [future.result() for future in concurrent.futures.as_completed(chunk_futures)]
-        doc['chunks_corrected'] = corrected_chunks
+        
+        for future, chunk in chunk_futures.items():
+            try:
+                corrected_chunk = future.result(timeout=60)  # Individual chunk timeout
+                corrected_chunks.append(corrected_chunk)
+            except concurrent.futures.TimeoutError:
+                # Log and mark the document's chunk as failed
+                print(f"Processing chunk for doc {doc['url']} took too long. Moving to the next chunk.")
+                mark_document_as_error(doc_id=doc['_id'])
+                corrected_chunks.append(f"Error: Timed out for chunk {chunk}")
+            except Exception as e:
+                # Catch any other exceptions and log
+                mark_document_as_error(doc_id=doc['_id'])
+                print(f"Error processing chunk for doc {doc['url']}: {str(e)}")
+                corrected_chunks.append(f"Error: {str(e)} for chunk {chunk}")
+
+    # Add corrected chunks back to the document
+
+    doc['chunks_corrected'] = corrected_chunks
     return doc
+
+# Function to add a stopped status to a document
+def mark_document_as_error(doc_id):
+    print('ID Came for marking')
+    # Update the document status to 'stopped' in the database
+    status = update_child_doc_status_by_id(doc_id, 'stopped')
+    print(f'Document {doc_id} marked as stopped. Status Update: {status}')
+
 
 def grammar_check_main_concurrent(doc_list=[]):
     """
@@ -486,7 +533,7 @@ def get_corrected_highlights(temp_doc,caution_word_list=["Best", "Specialist", "
 
 
     df = pd.DataFrame(temp_sent_list)
-    print(df)
+    # print(df)
     filtered_df = df[df['highlighted'].str.contains('<b>')]
     filtered_df = normalize_and_filter(filtered_df,'highlighted')
     org_sentences = df['originalContent'].tolist()
@@ -499,21 +546,27 @@ def get_corrected_highlights(temp_doc,caution_word_list=["Best", "Specialist", "
     return ret_docs
 
 
-def ai_runner(doc_list,caution_word_list=[],enable_db=False):
+def ai_runner(doc_list,caution_word_list=[],enable_db=False,del_flag=None):
     doc_list_ccc = []
+    del_flag = False
     for corrected_doc in grammar_check_main_concurrent(doc_list):
         print('Working on ' + corrected_doc.get('title',''))
         temp_doc = {}
-        temp_doc = get_corrected_highlights(corrected_doc.get('chunks_corrected'))
+        try:
+            temp_doc = get_corrected_highlights(corrected_doc.get('chunks_corrected'))
+            corrected_doc['main_data'] = temp_doc
+            corrected_doc['status'] = 'done'
+        except:
+            temp_doc = {}
+            corrected_doc['main_data'] = temp_doc
+            corrected_doc['status'] = 'stopped'
+            del_flag = True
 
-        corrected_doc['main_data'] = temp_doc
-        corrected_doc['status'] = 'done'
         del corrected_doc['chunks_corrected']
         doc_list_ccc.append(corrected_doc)
 
-
     if enable_db:
-        status = update_processed_documents(doc_list_ccc)
+        status = update_processed_documents(doc_list_ccc,del_flag=del_flag)
         print('Database updated!',status)
     return doc_list_ccc
 
@@ -525,18 +578,19 @@ def main(url, mode='crawl', max_pages=4, input_type="URL", caution_words=None,id
         caution_words = []
 
     final_results = []
-    print('Id is ',id)
+    # print('Id is ',id)
     # try:
     try:
         # 1. Retrieve and split text documents
         document_list = reterive_split_text(url=url, mode=mode, max_pages=max_pages, enable_db=True, id=id)
-        
+            
         # 2. Enter a loop to process remaining documents
         while True:
             # 3. Get the base URL for further processing
             base_url = get_base_url(url)
             
             # 4. Retrieve the initial documents with their parent information
+            delete_stopped_processed_documents(id)
             retrieved_documents = get_first_two_init_pages_with_parent(id)
             print(f'Length of Remaining docs: {len(retrieved_documents)}')
             

@@ -58,7 +58,7 @@ def read_processed_pages(query):
 def get_first_two_init_pages_with_parent(parent_doc_id):
     # Find the parent document
     parent_doc = parent_docs_collection.find_one({'_id': ObjectId(parent_doc_id)})
-    
+
     if not parent_doc:
         return None, f"No parent document found with id: {parent_doc_id}"
      
@@ -68,7 +68,7 @@ def get_first_two_init_pages_with_parent(parent_doc_id):
     
     return [doc for doc in documents]
 
-def update_processed_documents(documents):
+def update_processed_documents(documents,del_flag=False):
     for doc in documents:
         # Extract the ID from the document
         document_id = doc['_id']
@@ -76,18 +76,24 @@ def update_processed_documents(documents):
         # Create the filter criteria using the document ID
         filter_criteria = {'_id': document_id}
         
-        # Create the update operation (remove _id from the update values)
-        update_values = {key: value for key, value in doc.items() if key != '_id'}
-        update_operation = {'$set': update_values}
+        if not del_flag:
+            # Create the update operation (remove _id from the update values)
+            update_values = {key: value for key, value in doc.items() if key != '_id'}
+            update_operation = {'$set': update_values}
+            
+            
+            # Perform the update_one operation
+            result = processed_pages_collection.update_one(filter_criteria, update_operation)
+            
+            if result.matched_count == 0:
+                print(f"No document found with _id: {document_id} to update.")
+            else:
+                print(f"Document with _id: {document_id} updated successfully.")
         
-        
-        # Perform the update_one operation
-        result = processed_pages_collection.update_one(filter_criteria, update_operation)
-        
-        if result.matched_count == 0:
-            print(f"No document found with _id: {document_id} to update.")
         else:
-            print(f"Document with _id: {document_id} updated successfully.")
+            print('Deleting specific page')
+            # Perform the delete_one operation
+            result = processed_pages_collection.delete_one(filter_criteria)
             
     return "Documents updated successfully."
 
@@ -104,7 +110,7 @@ def update_parent_doc_status_by_id(id, new_status):
     
     query = {'_id':  ObjectId(id)}
     update = {'$set': {'status': new_status}}
-    print(update)
+    # print(update)
     result = parent_docs_collection.update_one(query, update)
     
     if result.matched_count == 0:
@@ -304,3 +310,39 @@ def get_id(doc_id):
     id = ObjectId(doc_id)
     return id
 
+
+
+def update_child_doc_status_by_id(id, new_status):
+    """
+    Update the status of a child document by its ID in the processed_pages_collection.
+
+    :param id: str, The ID of the document to update.
+    :param new_status: str, The new status to set.
+    :return: str, A message indicating the result of the operation.
+    """
+    # Convert the string ID to ObjectId
+    query = {'_id': ObjectId(id)}
+    
+    # Define the update operation
+    update = {'$set': {'status': new_status}}
+    print(update)  # Optional: print the update operation for debugging
+
+    # Perform the update operation
+    result = processed_pages_collection.update_one(query, update)
+    
+    # Check the result and return an appropriate message
+    if result.matched_count == 0:
+        return f"No document found with ID: {id}"
+    elif result.modified_count == 0:
+        return f"Document with ID: {id} was already in the desired status: {new_status}"
+    else:
+        return f"Document with ID: {id} updated successfully to status: {new_status}"
+    
+def delete_stopped_processed_documents(parent_id):
+    try:
+        # 'parrent_id': parent_doc_id
+        query = {'parrent_id': parent_id, 'status': 'stopped'}
+        result = processed_pages_collection.delete_many(query)
+        print(f"Deleted {result.deleted_count} documents with status 'stopped'")
+    except Exception as e:
+        print(f"An error occurred: {e}")

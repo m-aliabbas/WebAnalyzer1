@@ -277,6 +277,7 @@ class RequestData(BaseModel):
     timestamp: str
     main_data: MainData
 
+
 @app.post("/update_table_data/")
 async def process_data(data: RequestData):
     try:
@@ -322,3 +323,4 @@ async def get_multipage_pdf(request: IdRequest):
 if __name__ == "__main__":
     import uvicorn
     uvicorn.run(app, host="0.0.0.0", port=8000)
+
