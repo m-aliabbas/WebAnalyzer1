@@ -13,6 +13,7 @@ from reportlab.pdfbase import pdfmetrics
 import datetime
 import uuid
 import os
+from PIL import Image as PILImage
 from pypdf import PdfWriter
 
 
@@ -97,10 +98,56 @@ def create_pdf(file_name,data,caution_sentences,title,url):
 
         # Add the logo image at the top left
         logo_path = "./src/imgs/image.png"  # Replace with the actual path to your logo image
+        # logo = Image(logo_path)
+        
+        # logo.drawWidth = 1 * inch
+        # logo.drawHeight = logo.drawWidth * 0.6  # Adjust height proportionally to maintain aspect ratio
+        # logo.hAlign = 'LEFT'
+        # elements.append(logo)
+        # Load the image using PIL to get its original dimensions
+        # image = PILImage.open(logo_path)
+        # original_width, original_height = image.size
+
+        # # Set the desired width
+        # desired_width = 1.5 * inch
+
+        # # Calculate the proportional height based on the original aspect ratio
+        # aspect_ratio = original_height / float(original_width)
+        # desired_height = desired_width * aspect_ratio
+
+        # # Create the image in the report
+        # logo = Image(logo_path)
+        # logo.drawWidth = desired_width
+        # logo.drawHeight = desired_height
+        # logo.hAlign = 'LEFT'
+
+        # # Add to elements list
+        # elements.append(logo)
+        image = PILImage.open(logo_path)
+        original_width, original_height = image.size
+
+        # Set a maximum width and height based on the layout
+        max_width = 3 * inch  # Maximum width you want to allow
+        max_height = 1.5 * inch  # Maximum height you want to allow
+
+        # Calculate the scaling factor to maintain aspect ratio
+        width_ratio = max_width / float(original_width)
+        height_ratio = max_height / float(original_height)
+        scaling_factor = min(width_ratio, height_ratio)
+
+        # Calculate the final dimensions based on the scaling factor
+        final_width = original_width * scaling_factor
+        final_height = original_height * scaling_factor
+
+        # Create the image in the report
         logo = Image(logo_path)
-        logo.drawWidth = 1.5 * inch
-        logo.drawHeight = logo.drawWidth * 0.6  # Adjust height proportionally to maintain aspect ratio
-        logo.hAlign = 'LEFT'
+        logo.drawWidth = final_width
+        logo.drawHeight = final_height
+
+        # Align image as needed, center or left
+        logo.hAlign = 'LEFT'  # You can change this to 'LEFT' or 'RIGHT'
+
+        # Add the logo to the elements list
         elements.append(logo)
 
         # Add the line with website link on the left and current date time on the right
