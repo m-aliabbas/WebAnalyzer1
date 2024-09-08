@@ -550,6 +550,7 @@ def ai_runner(doc_list,caution_word_list=[],enable_db=False,del_flag=None):
     doc_list_ccc = []
     del_flag = False
     for corrected_doc in grammar_check_main_concurrent(doc_list):
+        del_flag = False
         print('Working on ' + corrected_doc.get('title',''))
         temp_doc = {}
         try:
