@@ -42,7 +42,8 @@ from utils.utils import *
 #===============================================================================
 # Load environment variables
 load_dotenv()
-
+# print(os.environ.get('OPENAI_API_KEY'))
+# 
 # ==============================================================================
 # making an LLM object
 llm=ChatOpenAI(temperature=0.0, model_name="gpt-4o") 
@@ -247,7 +248,7 @@ def get_corrected_content(page_content):
     #         max_retries=3,
     #         # other params...
     #     )
-
+    
     llm = ChatOpenAI(temperature=0.0, model_name="gpt-4o")
     
 

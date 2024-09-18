@@ -12,6 +12,7 @@ import DashboardPage from './componets/DashboardPage';
 import CardDetailsPage from './componets/CardDetailsPage';
 import SubCardDetailsPage from './componets/SubCardDetailsPage';
 import WordProcessor from './componets/WordProcessor';
+import Keys from './componets/Keys';
 function App() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
 
@@ -30,6 +31,7 @@ function App() {
           <div className={`content ${isSidebarOpen ? 'content-open' : 'content-closed'}`}>
             <Routes>
               <Route path="/" element={<SearchPage />} />
+              <Route path="/keys" element={<Keys />} />
               <Route path="/wordcorrect" element={<WordProcessor />} />
               <Route path="/dashboard" element={<DashboardPage />} />
               <Route path="/card/:id" element={<CardDetailsPage />} />

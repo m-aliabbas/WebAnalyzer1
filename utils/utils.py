@@ -15,6 +15,13 @@ def format_card(doc):
         "halt_status": doc["halt_status"]
     }
 
+
+def format_keys(doc):
+    return {
+        'id' : str(doc["_id"]),
+        'OPENAI_API_KEY': doc.get("OPENAI_API_KEY",""),
+        'FIRECRAWL_API_KEY': doc.get("FIRECRAWL_API_KEY","")
+    }
 def format_child_card(doc):
     '''
     '''

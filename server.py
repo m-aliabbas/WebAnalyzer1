@@ -25,6 +25,8 @@ from src.db_driver import (
     get_parent_url_from_id,
     update_document,
     get_parent_by_id,
+    get_keys_from_db,
+    add_keys_to_db,
     get_child_doc_by_id
 )
 import os
@@ -56,6 +58,9 @@ app.add_middleware(
 class UrlItem(BaseModel):
     url: str
 
+class KeyItem(BaseModel):
+    open_ai_key: str
+    firecrawl_key: str
 
 class SearchItem(BaseModel):
     url: str
@@ -261,7 +266,7 @@ async def get_child_page_by_id(request: IdRequest):
     # Print the received URL
     print('child id ',request.ids)
     docs = get_child_doc_by_id(request.ids)
-    print(docs)
+    
     docs = format_child_card(docs)
     if not docs:
         raise HTTPException(status_code=404, detail="No documents found")
@@ -346,6 +351,17 @@ async def get_multipage_pdf(request: IdRequest):
             raise HTTPException(status_code=404, detail="File not found.")
     else:
         raise HTTPException(status_code=400, detail=resp.get('message', 'Error generating PDF'))
+
+@app.get("/get_keys/")
+async def get_keys1():
+    docs = get_keys_from_db()
+    docs = [format_keys(doc) for doc in docs]
+    try:
+        resp = {'resp':docs,'status':'true'}
+        return resp
+    except Exception as e:
+        resp = {'resp':str(e),'status':'false'}
+        return resp
 
  
 if __name__ == "__main__":

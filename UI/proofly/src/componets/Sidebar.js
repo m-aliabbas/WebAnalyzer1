@@ -24,6 +24,10 @@ const Sidebar = ({ isOpen}) => {
           <FontAwesomeIcon icon={faTachometerAlt} className="icon" />
           Dashboard
         </NavLink>
+        <NavLink to="/keys" activeClassName="active">
+          <FontAwesomeIcon icon={faTachometerAlt} className="icon" />
+          Keys
+        </NavLink>
       </div>
       {/* <div className="profile">
         <img src="https://via.placeholder.com/50" alt="Profile" />

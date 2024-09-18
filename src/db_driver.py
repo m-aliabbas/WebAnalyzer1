@@ -25,6 +25,29 @@ db = client['your_database_name']  # Replace with your database name
 parent_docs_collection = db['parent_docs']
 processed_pages_collection = db['processed_pages']
 
+keys_collection = db['keys']
+
+def add_keys_to_db(open_ai_key='abcded',firecrawl_key='abcdef'):
+    keys_to_add = {
+        'OPENAI_API_KEY':open_ai_key,
+        'FIRECRAWL_API_KEY':firecrawl_key
+    }
+    result = keys_collection.insert_one(keys_to_add)
+    return str(result.inserted_id)
+
+
+def get_keys_from_db():
+    documents = keys_collection.find()
+    doc_list = [doc for doc in documents]
+    if len(doc_list) < 0 :
+        add_keys_to_db()
+        documents = keys_collection.find()
+        doc_list = [doc for doc in documents] 
+    return doc_list
+
+
+
+
 def add_parrent_doc(address, number_of_pages,tags, options, status='init', halt_status=False, timestamp=datetime.now()):
     
     web_page_document = {
