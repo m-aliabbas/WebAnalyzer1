@@ -7,6 +7,7 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import DownloadIcon from '@mui/icons-material/Download';
 import axios from 'axios';
 import { API_BASE_URL } from './Config'; 
+import { faL } from '@fortawesome/free-solid-svg-icons';
 
 const StatusChip = styled(Chip)(({ status }) => ({
   backgroundColor: status === 'done' ? 'green' : status === 'in progress' ? 'blue' : 'red',
@@ -36,7 +37,7 @@ const TransparentCard = styled(MuiCard)(({ theme }) => ({
 
 const Card = ({ id, title, progress, tags, onDelete, halt_status }) => {
   const navigate = useNavigate();
-  const [isHalted, setIsHalted] = useState(halt_status === true);
+  const [isHalted, setIsHalted] = useState(halt_status === false);
 
   useEffect(() => {
     setIsHalted(halt_status === true);
@@ -73,16 +74,48 @@ const Card = ({ id, title, progress, tags, onDelete, halt_status }) => {
     }
   };
 
+  // const handleDownload = async () => {
+  //   try {
+  //     const response = await axios.post(`${API_BASE_URL}/get_multipage_pdf/`, { ids: id }, {
+  //       responseType: 'blob', // Important to specify this to handle binary data
+  //     });
+  //     console.log(response);
+  //     const url = window.URL.createObjectURL(new Blob([response.data]));
+  //     const link = document.createElement('a');
+  //     link.href = url;
+  //     link.setAttribute('download', `${id}.pdf`); // The ID from the URL as the filename
+  //     document.body.appendChild(link);
+  //     link.click();
+  //     document.body.removeChild(link);
+  //   } catch (error) {
+  //     console.error('Error downloading PDF:', error);
+  //     alert('An error occurred while downloading the file.');
+  //   }
+  // };
+
   const handleDownload = async () => {
     try {
       const response = await axios.post(`${API_BASE_URL}/get_multipage_pdf/`, { ids: id }, {
-        responseType: 'blob', // Important to specify this to handle binary data
+        responseType: 'blob',
       });
   
+      // Extract filename from content-disposition header
+      const contentDisposition = response.headers['content-disposition'];
+      let filename = 'downloaded_file.pdf'; // Default file name
+      if (contentDisposition) {
+        console.log(contentDisposition);
+        const filenameRegex = /filename[^;=\n]*=((['"]).*?\2|[^;\n]*)/;
+        const matches = filenameRegex.exec(contentDisposition);
+        if (matches != null && matches[1]) {
+          filename = matches[1].replace(/['"]/g, ''); // Extract the file name
+        }
+      }
+  
+      // Create a blob URL for the response data and trigger download
       const url = window.URL.createObjectURL(new Blob([response.data]));
       const link = document.createElement('a');
       link.href = url;
-      link.setAttribute('download', `${id}.pdf`); // The ID from the URL as the filename
+      link.setAttribute('download', filename); // Use the extracted filename
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
@@ -91,6 +124,7 @@ const Card = ({ id, title, progress, tags, onDelete, halt_status }) => {
       alert('An error occurred while downloading the file.');
     }
   };
+  
 
   return (
     <TransparentCard>
@@ -107,13 +141,13 @@ const Card = ({ id, title, progress, tags, onDelete, halt_status }) => {
         </Box>
        
         <ButtonContainer>
-          <Button
+          {/* <Button
             variant="contained"
             color={isHalted ? "warning" : "primary"}
             onClick={handleHaltToggle}
           >
             {isHalted ? "Unhalt" : "Halt"}
-          </Button>
+          </Button> */}
           <Tooltip title="Download PDF">
             <IconButton color="primary" onClick={handleDownload}>
               <DownloadIcon />

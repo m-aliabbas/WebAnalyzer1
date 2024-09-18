@@ -53,6 +53,22 @@ def cleanify(input_string):
     
     return cleaned_string.strip()
 
+
+def get_major_part(uri):
+    # Remove 'http://', 'https://', or 'www.'
+    uri = re.sub(r'(https?://|www\.)', '', uri)
+    
+    # For URLs, match the domain name part before the first dot (e.g., example.com -> example)
+    url_match = re.match(r'([^\.]+)', uri)
+    if url_match:
+        return url_match.group(1)
+    
+    # For file names, extract everything before the first dot
+    file_match = re.match(r'([^\.]+)', uri)
+    if file_match:
+        return file_match.group(1)
+    
+    return uri  #
 def generate_random_file_name_uuid(file_name=None,folder_path='./temp_docs/'):
 
     if not os.path.exists(folder_path):
@@ -68,6 +84,16 @@ def generate_random_file_name_uuid(file_name=None,folder_path='./temp_docs/'):
             file_name += '.pdf'
     file_name = os.path.join(folder_path, file_name)
     return file_name
+
+
+def make_file_name(file_name=None,folder_path='./temp_docs/'):
+    if not os.path.exists(folder_path):
+        os.makedirs(folder_path)
+    file_name = file_name + '.pdf'
+    file_name = os.path.join(folder_path, file_name)
+    return file_name
+    
+    
 
 def get_text_str(html_content):
     soup = BeautifulSoup(html_content, 'html.parser')

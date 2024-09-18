@@ -25,13 +25,13 @@ const Sidebar = ({ isOpen}) => {
           Dashboard
         </NavLink>
       </div>
-      <div className="profile">
+      {/* <div className="profile">
         <img src="https://via.placeholder.com/50" alt="Profile" />
         <div className="profile-info">
           <h3>John Doe</h3>
           <p>john.doe@example.com</p>
         </div>
-      </div>
+      </div> */}
     </div>
   </>
   );

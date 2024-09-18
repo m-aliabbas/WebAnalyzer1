@@ -264,7 +264,17 @@ def single_page_pdf_runner(id):
 def multi_page_pdf_runner(id):
     try:
         merger = PdfWriter()
+        
 
+        url = get_parent_url_by_id(id)
+
+        file_name_gen = generate_random_file_name_uuid(id)
+
+        if url:
+            file_name_gen = get_major_part(url)
+            file_name_gen = make_file_name(file_name_gen)
+        
+        
         docs = get_child_docs_by_id(id)
         
         docs = [format_child_card(doc) for doc in docs]
@@ -285,7 +295,7 @@ def multi_page_pdf_runner(id):
         for pdf_name in pdf_name_list:
             merger.append(pdf_name)
         
-        final_pdf_name = generate_random_file_name_uuid(id)
+        final_pdf_name = file_name_gen
         merger.write(final_pdf_name)
         merger.close()
 

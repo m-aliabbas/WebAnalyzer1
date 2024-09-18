@@ -37,12 +37,20 @@ ca = certifi.where()
 app = FastAPI()
 
 # Set up CORS
+# app.add_middleware(
+#     CORSMiddleware,
+#     allow_origins=["*"],  # Allow all origins, adjust this to your needs
+#     allow_credentials=True,
+#     allow_methods=["*"],  # Allow all methods (GET, POST, OPTIONS, etc.)
+#     allow_headers=["*"],  # Allow all headers
+# )
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # Allow all origins, adjust this to your needs
+    allow_origins=["*"],  # You can restrict this to your client URL
     allow_credentials=True,
-    allow_methods=["*"],  # Allow all methods (GET, POST, OPTIONS, etc.)
-    allow_headers=["*"],  # Allow all headers
+    allow_methods=["*"],
+    allow_headers=["*"],
+    expose_headers=["Content-Disposition"]  # Expose Content-Disposition header
 )
 
 class UrlItem(BaseModel):
@@ -306,19 +314,39 @@ async def get_parent_by_id_api(request: IdRequest):
     return {"title":docs['url'],
             "status":docs['status']}
 
+# @app.post("/get_multipage_pdf/")
+# async def get_multipage_pdf(request: IdRequest):
+#     print('Page Id',request.ids)
+#     resp = multi_page_pdf_runner(str(request.ids))
+
+#     if resp['status']:
+#         file_path = resp['file_name']
+#         if os.path.exists(file_path):
+#             print('file_name is',file_path)
+#             return FileResponse(file_path, filename=os.path.basename(file_path))
+#         else:
+#             raise HTTPException(status_code=404, detail="File not found.")
+#     else:
+#         raise HTTPException(status_code=400, detail=resp.get('message', 'Error generating PDF'))
+
 @app.post("/get_multipage_pdf/")
 async def get_multipage_pdf(request: IdRequest):
-    print('Page Id',request.ids)
+    print('Page Id', request.ids)
     resp = multi_page_pdf_runner(str(request.ids))
 
     if resp['status']:
         file_path = resp['file_name']
         if os.path.exists(file_path):
-            return FileResponse(file_path, filename=os.path.basename(file_path))
+            print('file_name is', file_path)
+            headers = {
+                "Content-Disposition": f"attachment; filename={os.path.basename(file_path)}"
+            }
+            return FileResponse(file_path, headers=headers)
         else:
             raise HTTPException(status_code=404, detail="File not found.")
     else:
         raise HTTPException(status_code=400, detail=resp.get('message', 'Error generating PDF'))
+
  
 if __name__ == "__main__":
     import uvicorn

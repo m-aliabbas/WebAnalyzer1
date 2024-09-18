@@ -172,12 +172,12 @@ def update_halt_status(doc_id, new_halt_status):
         return f"Document with URL: {doc_id} updated successfully to halt_status: {new_halt_status}"
     
 def get_all_parent_docs():
-    documents = parent_docs_collection.find()
+    documents = parent_docs_collection.find().sort("_id", -1)
     return [doc for doc in documents]
     
 def get_non_halted_non_completed_docs():
     query = {'halt_status': False, 'status': {'$nin': ['done', 'processing']}}
-    documents = parent_docs_collection.find(query)
+    documents = parent_docs_collection.find(query).sort("_id", -1)
     return [doc for doc in documents]
 
 def halt_task(doc_id):
@@ -255,6 +255,18 @@ def get_parent_by_id(doc_id):
     query = {'_id': ObjectId(doc_id)}
     result = parent_docs_collection.find_one(query)
     return result
+
+def get_parent_url_by_id(doc_id):
+    query = {'_id': ObjectId(doc_id)}
+    projection = {'url': 1, '_id': 0}  # Project only the 'url' field and exclude '_id'
+    result = parent_docs_collection.find_one(query, projection)
+    
+    if result:
+        return result.get('url')
+        
+    return  None # Return None if no document is found
+
+
 
 def get_child_docs_by_id(doc_id):
     try:
