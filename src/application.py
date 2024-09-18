@@ -399,12 +399,16 @@ def process_document(doc):
     
     with concurrent.futures.ThreadPoolExecutor() as chunk_executor:
         # print(doc)
+        if 'doc' in doc['url']:
+            timeout_var = 600
+        else:
+            timeout_var = 90
         chunks = doc['chunks']
         chunk_futures = {chunk_executor.submit(get_corrected_content, chunk): chunk for chunk in chunks}
         
         for future, chunk in chunk_futures.items():
             try:
-                corrected_chunk = future.result(timeout=60)  # Individual chunk timeout
+                corrected_chunk = future.result(timeout=timeout_var)  # Individual chunk timeout
                 corrected_chunks.append(corrected_chunk)
             except concurrent.futures.TimeoutError:
                 # Log and mark the document's chunk as failed
@@ -622,8 +626,7 @@ def main(url, mode='crawl', max_pages=4, input_type="URL", caution_words=None,id
 
 def file_main(file_content,url,id,enable_db=True):
     documents_list = []
-    plain_text = extract_plain_text_from_markdown(file_content)
-    plain_text = remove_all_repetitions(plain_text)
+    plain_text = file_content
     document_dict = {'url':url,'title':url,'page_content':plain_text}
     chunks = get_splited_text(plain_text)
     chunk_list = []

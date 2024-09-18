@@ -169,73 +169,75 @@ def create_pdf(file_name,data,caution_sentences,title,url):
         title = Paragraph("Language Audit", styleLN)
         elements.append(title)
         elements.append(Spacer(1, 0.5 * inch))  # Added gap
-
-        # Load the SVG image
         svg_path = "./src/imgs/discover-icon.svg"  # Replace with the actual path to your SVG image
         svg_drawing = svg2rlg(svg_path)
         svg_drawing.scale(1.0, 1.0)  # Adjust scaling as needed
+        if len(caution_sentences) > 0:
+            # Load the SVG image
+            
 
-        # Caution Sentences Header Data
-        caution_header_data = [
-            [svg_drawing, Paragraph("Caution Sentences", styleAptosDisplayBold)]
-        ]
-
-        # Caution Sentences Body Data
-        list_items = [ListItem(Paragraph(process_text_with_bold(sentence), styleN)) for sentence in caution_sentences]
-        caution_body_data = [
-            ['', ListFlowable(list_items, bulletType='bullet', start='circle', leftIndent=0.25*inch)]
-        ]
-
-        # Combine Caution Sentences Header and Body Data
-        caution_data = caution_header_data + caution_body_data
-
-        # Create caution table
-        caution_table = Table(caution_data, colWidths=[1*inch, 6*inch])
-        caution_table.setStyle(TableStyle([
-            ('BACKGROUND', (0, 0), (-1, -1), colors.white),
-            ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
-            ('VALIGN', (0, 0), (-1, -1), 'MIDDLE'),
-            ('FONTSIZE', (1, 1), (-1, 1), 14),
-            ('BOTTOMPADDING', (1, 1), (-1, 1), 12),
-            ('BACKGROUND', (1, 2), (-1, -1), colors.white),  # Set the background to white
-            ('GRID', (0, 0), (-1, -1), 0, colors.white),     # Remove the grid
-        ]))
-
-        elements.append(caution_table)
-        elements.append(Spacer(1, 0.5*inch))
-
-        # Header Data
-        header_data = [
-            [svg_drawing, Paragraph("Language Suggestion", styleAptosDisplayBold), ""]
-        ]
-
-        # Table Data
-        table_data = [['', Paragraph('Original Content', styleAptosDisplayBold), Paragraph('Changes', styleAptosDisplayBold)]]
-
-        for item in data:
-            row = [
-                centered_square(),
-                Paragraph(item['originalContent'], styleN),
-                Paragraph(process_text_with_bold(item['changes']), styleN)
+            # Caution Sentences Header Data
+            caution_header_data = [
+                [svg_drawing, Paragraph("Caution Sentences", styleAptosDisplayBold)]
             ]
-            table_data.append(row)
 
-        # Combine Header and Table Data
-        combined_data = header_data + table_data
+            # Caution Sentences Body Data
+            list_items = [ListItem(Paragraph(process_text_with_bold(sentence), styleN)) for sentence in caution_sentences]
+            caution_body_data = [
+                ['', ListFlowable(list_items, bulletType='bullet', start='circle', leftIndent=0.25*inch)]
+            ]
 
-        # Create table
-        table = Table(combined_data, colWidths=[1*inch, 3*inch, 3*inch])
-        table.setStyle(TableStyle([
-            ('BACKGROUND', (0, 0), (-1, -1), colors.white),
-            ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
-            ('VALIGN', (0, 0), (-1, -1), 'MIDDLE'),
-            ('FONTSIZE', (1, 1), (-1, 1), 14),
-            ('BOTTOMPADDING', (1, 1), (-1, 1), 12),
-            ('BACKGROUND', (1, 2), (-1, -1), colors.white),  # Set the background to white
-            ('GRID', (0, 0), (-1, -1), 0, colors.white),     # Remove the grid
-        ]))
+            # Combine Caution Sentences Header and Body Data
+            caution_data = caution_header_data + caution_body_data
 
-        elements.append(table)
+            # Create caution table
+            caution_table = Table(caution_data, colWidths=[1*inch, 6*inch])
+            caution_table.setStyle(TableStyle([
+                ('BACKGROUND', (0, 0), (-1, -1), colors.white),
+                ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
+                ('VALIGN', (0, 0), (-1, -1), 'MIDDLE'),
+                ('FONTSIZE', (1, 1), (-1, 1), 14),
+                ('BOTTOMPADDING', (1, 1), (-1, 1), 12),
+                ('BACKGROUND', (1, 2), (-1, -1), colors.white),  # Set the background to white
+                ('GRID', (0, 0), (-1, -1), 0, colors.white),     # Remove the grid
+            ]))
+
+            elements.append(caution_table)
+            elements.append(Spacer(1, 0.5*inch))
+
+        if len(data) > 0:
+            # Header Data
+            header_data = [
+                [svg_drawing, Paragraph("Language Suggestion", styleAptosDisplayBold), ""]
+            ]
+
+            # Table Data
+            table_data = [['', Paragraph('Original Content', styleAptosDisplayBold), Paragraph('Changes', styleAptosDisplayBold)]]
+
+            for item in data:
+                row = [
+                    centered_square(),
+                    Paragraph(item['originalContent'], styleN),
+                    Paragraph(process_text_with_bold(item['changes']), styleN)
+                ]
+                table_data.append(row)
+
+            # Combine Header and Table Data
+            combined_data = header_data + table_data
+
+            # Create table
+            table = Table(combined_data, colWidths=[1*inch, 3*inch, 3*inch])
+            table.setStyle(TableStyle([
+                ('BACKGROUND', (0, 0), (-1, -1), colors.white),
+                ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
+                ('VALIGN', (0, 0), (-1, -1), 'MIDDLE'),
+                ('FONTSIZE', (1, 1), (-1, 1), 14),
+                ('BOTTOMPADDING', (1, 1), (-1, 1), 12),
+                ('BACKGROUND', (1, 2), (-1, -1), colors.white),  # Set the background to white
+                ('GRID', (0, 0), (-1, -1), 0, colors.white),     # Remove the grid
+            ]))
+
+            elements.append(table)
         doc.build(elements)
 
         # print("PDF created successfully!")
