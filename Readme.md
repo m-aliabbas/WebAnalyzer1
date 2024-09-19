@@ -19,7 +19,9 @@ Follow these instructions to set up and run Proofly on your local machine.
 - npm (Node Package Manager)
 
 ### Installation
-
+0. **Setup Screens**
+   To run the application with concestancy on ssh Server you need to create screen. Using tmux create two 
+   screens frontend and backend
 1. **Clone the Repository**
 
    ``` 
@@ -61,6 +63,12 @@ Follow these instructions to set up and run Proofly on your local machine.
 1. **Start the FastAPI Server**
    It will run the appliacation over http://0.0.0.0:8000/
    Navigate to the project’s root directory and start the FastAPI server:
+   
+
+   Go to backend stream 
+   ```
+   tmux a -t backend
+   ```
 
    ```
    python server.py
@@ -70,6 +78,11 @@ Follow these instructions to set up and run Proofly on your local machine.
 
    Navigate to the UI directory and start the React frontend:
    Since port 80 have some premssion issue that why a sudo.
+
+   Go to backend stream 
+   ```
+   tmux a -t frontend
+   ```
 
     ```
    cd UI/proofly
