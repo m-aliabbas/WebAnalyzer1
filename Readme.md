@@ -18,6 +18,16 @@ Follow these instructions to set up and run Proofly on your local machine.
 - Node.js 14.x or higher
 - npm (Node Package Manager)
 
+### prepare screens
+1. To presistance running you need to install tmux.
+```
+sudo apt install tmux
+```
+2. You need to create tmux screens when PC reboots.
+```
+tmux new-session -s frontend
+tmux new-session -s backend
+```
 ### Installation
 0. **Setup Screens**
    To run the application with concestancy on ssh Server you need to create screen. Using tmux create two 
