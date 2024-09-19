@@ -57,8 +57,9 @@ Follow these instructions to set up and run Proofly on your local machine.
 
 ### Running the Application
 
-1. **Start the FastAPI Server**
 
+1. **Start the FastAPI Server**
+   It will run the appliacation over http://0.0.0.0:8000/
    Navigate to the project’s root directory and start the FastAPI server:
 
    ```
@@ -68,10 +69,11 @@ Follow these instructions to set up and run Proofly on your local machine.
 2. **Start the Frontend**
 
    Navigate to the UI directory and start the React frontend:
+   Since port 80 have some premssion issue that why a sudo.
 
     ```
    cd UI/proofly
-   npm start
+   sudo PORT=80 npm start
    ```
 
 3. **Access the Application**
@@ -79,7 +81,7 @@ Follow these instructions to set up and run Proofly on your local machine.
    Once both the server and UI are running, you can access Proofly by opening your web browser and navigating to:
 
    ```
-   http://localhost:3000
+   http://localhost:80
    ```
 
 ## Usage
