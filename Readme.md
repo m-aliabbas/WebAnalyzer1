@@ -26,8 +26,8 @@ sudo apt install tmux
 ```
 2. You need to create tmux screens when PC reboots.
 ```
-tmux new-session -s frontend
-tmux new-session -s backend
+tmux new -s frontend
+tmux new -s backend
 ```
 ### Installation
 0. **Setup Screens**
