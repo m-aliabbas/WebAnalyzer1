@@ -13,6 +13,7 @@ import CardDetailsPage from './componets/CardDetailsPage';
 import SubCardDetailsPage from './componets/SubCardDetailsPage';
 import WordProcessor from './componets/WordProcessor';
 import Keys from './componets/Keys';
+import AcmeChallenge from './componets/AcmeChallenge';// New Component
 function App() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
 
@@ -36,6 +37,7 @@ function App() {
               <Route path="/dashboard" element={<DashboardPage />} />
               <Route path="/card/:id" element={<CardDetailsPage />} />
               <Route path="/subcard/:subCardId" element={<SubCardDetailsPage />} /> {/* New route for sub-card details */}
+              <Route path="/.well-known/acme-challenge/:token" element={<AcmeChallenge />} />
             </Routes>
           </div>
         </div>
