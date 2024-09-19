@@ -37,7 +37,7 @@ function App() {
               <Route path="/dashboard" element={<DashboardPage />} />
               <Route path="/card/:id" element={<CardDetailsPage />} />
               <Route path="/subcard/:subCardId" element={<SubCardDetailsPage />} /> {/* New route for sub-card details */}
-              <Route path="/.well-known/acme-challenge/:token" element={<AcmeChallenge />} />
+              <Route path="/.well-known/acme-challenge/" element={<AcmeChallenge />} />
             </Routes>
           </div>
         </div>
