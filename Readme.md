@@ -19,6 +19,7 @@ Follow these instructions to set up and run Proofly on your local machine.
 - npm (Node Package Manager)
 
 ### prepare screens
+tmux (short for "Terminal Multiplexer") is a terminal management tool that allows you to run multiple terminal sessions inside a single terminal window. It's especially useful for managing long-running processes on remote servers or when you want to keep sessions open even after disconnecting.
 1. To presistance running you need to install tmux.
 ```
 sudo apt install tmux
