@@ -293,30 +293,41 @@ def get_parent_url_by_id(doc_id):
 def get_parent_download_link(doc_id):
     query = {'_id': ObjectId(doc_id)}
     projection = {'download_link': 1, '_id': 0}  # Project only the 'url' field and exclude '_id'
-    result = parent_docs_collection.find_one(query, projection)
-    print(result) 
+    result = parent_docs_collection.find_one(query)
+    print('res: db',result) 
     if result:
         return result.get('download_link','')
     
     return None
          
-def set_download_link(id,file_path):
-    # Convert the string ID to ObjectId
-    query = {'_id': ObjectId(id)}
-    
-    # Define the update operation
-    update = {'$set': {'download_link': file_path}}
-    # print(update)  # Optional: print the update operation for debugging
+from bson import ObjectId  # Ensure this import is present
 
-    # Perform the update operation
-    result = processed_pages_collection.update_one(query, update)
-    print('db_results',result.matched_count)
-    if result.matched_count == 0:
-        return f"No document found with ID: {id}"
-    elif result.modified_count == 0:
-        return f"Document with ID: {id} was already in the desired filelink: {file_path}"
-    else:
-        return f"Document with ID: {id} updated successfully to filelink: {file_path}"
+def set_download_link(id, file_path):
+    try:
+        # Convert the string ID to ObjectId
+        print('id coming', id)
+        if not ObjectId.is_valid(id):
+            return f"Invalid ObjectId format: {id}"
+
+        query = {'_id': ObjectId(id)}
+        
+        # Define the update operation
+        update = {'$set': {'download_link': file_path}}
+        
+        # Perform the update operation
+        result = parent_docs_collection.update_one(query, update)
+        print('db_results', result.matched_count)
+        
+        if result.matched_count == 0:
+            return f"No document found with ID: {id}"
+        elif result.modified_count == 0:
+            return f"Document with ID: {id} was already in the desired file link: {file_path}"
+        else:
+            return f"Document with ID: {id} updated successfully to file link: {file_path}"
+    
+    except Exception as e:
+        print(e)
+        return f"An error occurred: {str(e)}"
 
 
 

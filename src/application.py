@@ -39,6 +39,8 @@ from urllib.parse import urlparse
 from src.db_driver import *
 from src.file_handler import handle_files
 from utils.utils import *
+from src.make_pdf import multi_page_pdf_runner, single_page_pdf_runner
+
 #===============================================================================
 # Load environment variables
 load_dotenv()
@@ -613,7 +615,9 @@ def main(url, mode='crawl', max_pages=4, input_type="URL", caution_words=None,id
             if retrieved_documents:
                 res = ai_runner(retrieved_documents, caution_word_list=caution_words, enable_db=True)
                 final_results.extend(res)
-        
+        print('='*50)
+        print('Calling PDF Gen Tool')
+        pdf_file_link = multi_page_pdf_runner(id)
         # 8. Return the final results after processing all documents
         return final_results
     
