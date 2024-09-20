@@ -268,6 +268,7 @@ def multi_page_pdf_runner(id):
 
         download_link = get_parent_download_link(id)
         if download_link:
+            print('Parent Download Link',download_link)
             return {"status": True, "file_name": download_link,"message": "PDF reterived successfully!"}
         
         merger = PdfWriter()

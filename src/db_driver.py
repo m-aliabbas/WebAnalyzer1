@@ -296,7 +296,7 @@ def get_parent_download_link(doc_id):
     result = parent_docs_collection.find_one(query, projection)
     
     if result:
-        return result.get('url')
+        return result.get('download_link')
     
     return None
          
@@ -306,7 +306,7 @@ def set_download_link(id,file_path):
     
     # Define the update operation
     update = {'$set': {'download_link': file_path}}
-    print(update)  # Optional: print the update operation for debugging
+    # print(update)  # Optional: print the update operation for debugging
 
     # Perform the update operation
     result = processed_pages_collection.update_one(query, update)
