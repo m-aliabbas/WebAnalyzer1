@@ -27,23 +27,48 @@ processed_pages_collection = db['processed_pages']
 
 keys_collection = db['keys']
 
-def add_keys_to_db(open_ai_key='abcded',firecrawl_key='abcdef'):
-    keys_to_add = {
-        'OPENAI_API_KEY':open_ai_key,
-        'FIRECRAWL_API_KEY':firecrawl_key
-    }
-    result = keys_collection.insert_one(keys_to_add)
-    return str(result.inserted_id)
+# def add_keys_to_db(open_ai_key='abcded',firecrawl_key='abcdef',password='d1g1max'):
+#     keys_to_add = {
+#         'OPENAI_API_KEY':open_ai_key,
+#         'FIRECRAWL_API_KEY':firecrawl_key,
+#         'PASSWORD': password
+#     }
+#     result = keys_collection.insert_one(keys_to_add)
+#     return str(result.inserted_id)
 
 
 def get_keys_from_db():
     documents = keys_collection.find()
     doc_list = [doc for doc in documents]
-    if len(doc_list) < 0 :
+    print('get keys db',len(doc_list))
+    if len(doc_list) < 1 :
         add_keys_to_db()
         documents = keys_collection.find()
         doc_list = [doc for doc in documents] 
     return doc_list
+
+def add_keys_to_db(open_ai_key='abcded', firecrawl_key='abcdef', password='d1g1max'):
+    keys_to_add = {
+        'OPENAI_API_KEY': open_ai_key,
+        'FIRECRAWL_API_KEY': firecrawl_key,
+        'PASSWORD': password
+    }
+    print('come to add function')
+    # Check if any document exists
+    existing_keys = keys_collection.find_one({})
+    
+    if existing_keys:
+        # Update the existing document
+        result = keys_collection.update_one(
+            {'_id': existing_keys['_id']},  # Use the existing document's _id
+            {'$set': keys_to_add}
+        )
+        return 'Keys Updated'+str(existing_keys['_id'])
+    else:
+        # Insert a new document if none exists
+        print('Inserting new keys')
+        result = keys_collection.insert_one(keys_to_add)
+        return 'Keys Inserted'+str(result.inserted_id)
 
 
 

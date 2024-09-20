@@ -58,9 +58,14 @@ app.add_middleware(
 class UrlItem(BaseModel):
     url: str
 
+class PassKeyItem(BaseModel):
+    passkey: str
+    
+
 class KeyItem(BaseModel):
     open_ai_key: str
     firecrawl_key: str
+    password: str
 
 class SearchItem(BaseModel):
     url: str
@@ -359,8 +364,33 @@ async def get_keys1():
         resp = {'resp':docs,'status':'true'}
         return resp
     except Exception as e:
+
         resp = {'resp':str(e),'status':'false'}
         return resp
+    
+@app.post("/update_keys/")
+async def set_keys_1(request: KeyItem):
+    resp = add_keys_to_db(**request.dict())
+    return {"message": resp}
+
+@app.post("/auth_xyz/")
+async def auth(request: PassKeyItem):
+    docs = get_keys_from_db()
+    docs = [format_keys(doc) for doc in docs]
+    base_pass_key = docs[0]['PASSWORD']
+    print(request)
+    if request.passkey == base_pass_key:
+        return {"key":"d1g1max"}
+    else:
+        return {"key":"xyz"}
+
+# @app.post("/update_keys/")
+# async def update_keys(request: PassKeyItem):
+#     # Log the request
+#     print(f"Received passkey: {request.passkey}")
+#     # process the passkey or update the keys
+#     # return {"status": "success"}
+        
 
  
 if __name__ == "__main__":
