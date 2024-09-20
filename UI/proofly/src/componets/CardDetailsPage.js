@@ -50,14 +50,14 @@ const CardDetailsPage = () => {
         { ids: id }, 
         {
           responseType: 'blob', 
-          timeout: 600000 // 10 minutes timeout (600,000 milliseconds)
+          timeout: 600000 // Setting a 10-minute timeout (600,000 milliseconds)
         }
       );
   
       const url = window.URL.createObjectURL(new Blob([response.data]));
       const link = document.createElement('a');
       link.href = url;
-      link.setAttribute('download', `${id}.pdf`); 
+      link.setAttribute('download', `${id}.pdf`); // The ID from the URL as the filename
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
