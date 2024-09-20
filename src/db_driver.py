@@ -294,9 +294,9 @@ def get_parent_download_link(doc_id):
     query = {'_id': ObjectId(doc_id)}
     projection = {'download_link': 1, '_id': 0}  # Project only the 'url' field and exclude '_id'
     result = parent_docs_collection.find_one(query, projection)
-    
+    print(result) 
     if result:
-        return result.get('download_link')
+        return result.get('download_link','')
     
     return None
          

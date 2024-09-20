@@ -267,6 +267,7 @@ def multi_page_pdf_runner(id):
     try:
 
         download_link = get_parent_download_link(id)
+        print('Download Link Coming:',download_link)
         if download_link:
             print('Parent Download Link',download_link)
             return {"status": True, "file_name": download_link,"message": "PDF reterived successfully!"}
