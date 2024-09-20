@@ -32,7 +32,7 @@ const CardDetailsPage = () => {
       .catch(error => console.error('Error fetching parent data:', error));
 
     // Fetch sub-cards
-    axios.post(`${API_BASE_URL}/get_child_pages`, { ids: id })
+    axios.post(`${API_BASE_URL}/get_child_pages/`, { ids: id })
       .then(response => setSubCards(response.data))
       .catch(error => console.error('Error fetching sub-cards:', error));
   }, [id]);

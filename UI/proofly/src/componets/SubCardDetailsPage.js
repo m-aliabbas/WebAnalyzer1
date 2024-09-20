@@ -132,7 +132,7 @@ const SubCardDetailsPage = () => {
 
     try {
       console.log('Request body before sending:', requestBody); // Check the data here
-      const response = await fetch(`${API_BASE_URL}/update_table_data`, {
+      const response = await fetch(`${API_BASE_URL}/update_table_data/`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

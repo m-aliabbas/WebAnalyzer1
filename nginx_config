@@ -1,0 +1,44 @@
+server {
+    listen 80;
+    server_name contentcheck.dmxservers.com;
+
+    # Redirect all HTTP requests (including GET and POST) to HTTPS
+    return 301 https://$host$request_uri;
+}
+
+server {
+    listen 443 ssl;
+    server_name contentcheck.dmxservers.com;
+
+    ssl_certificate /etc/letsencrypt/live/contentcheck.dmxservers.com/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/contentcheck.dmxservers.com/privkey.pem;
+    include /etc/letsencrypt/options-ssl-nginx.conf;
+    ssl_dhparam /etc/letsencrypt/ssl-dhparams.pem;
+
+    # Serve React frontend on port 81
+    location / {
+        proxy_pass http://localhost:81;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection 'upgrade';
+        proxy_set_header Host $host;
+        proxy_cache_bypass $http_upgrade;
+    }
+
+    # Serve FastAPI API on port 8000
+    location /api/ {
+        proxy_pass http://localhost:8000/;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection 'upgrade';
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+
+        # Pass POST body and cache-bypass headers
+        proxy_set_header Content-Length $content_length;
+        proxy_set_header Content-Type $content_type;
+        proxy_cache_bypass $http_upgrade;
+    }
+}
