@@ -45,19 +45,23 @@ const CardDetailsPage = () => {
     try {
       setSnackbarMessage('Download started...');
       setSnackbarOpen(true);
-
-      const response = await axios.post(`${API_BASE_URL}/get_multipage_pdf/`, { ids: id }, {
-        responseType: 'blob', // Important to specify this to handle binary data
-      });
+  
+      const response = await axios.post(`${API_BASE_URL}/get_multipage_pdf/`, 
+        { ids: id }, 
+        {
+          responseType: 'blob', 
+          timeout: 600000 // 10 minutes timeout (600,000 milliseconds)
+        }
+      );
   
       const url = window.URL.createObjectURL(new Blob([response.data]));
       const link = document.createElement('a');
       link.href = url;
-      link.setAttribute('download', `${id}.pdf`); // The ID from the URL as the filename
+      link.setAttribute('download', `${id}.pdf`); 
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
-
+  
       setSnackbarMessage('Download completed.');
       setSnackbarOpen(true);
     } catch (error) {
@@ -66,7 +70,7 @@ const CardDetailsPage = () => {
       console.error('Error downloading PDF:', error);
     }
   };
-
+  
   const handleSnackbarClose = () => {
     setSnackbarOpen(false);
   };
