@@ -613,7 +613,7 @@ def main(url, mode='crawl', max_pages=4, input_type="URL", caution_words=None,id
             if retrieved_documents:
                 res = ai_runner(retrieved_documents, caution_word_list=caution_words, enable_db=True)
                 final_results.extend(res)
-            
+        
         # 8. Return the final results after processing all documents
         return final_results
     

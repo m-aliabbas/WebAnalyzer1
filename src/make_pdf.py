@@ -265,6 +265,11 @@ def single_page_pdf_runner(id):
 
 def multi_page_pdf_runner(id):
     try:
+
+        download_link = get_parent_download_link(id)
+        if download_link:
+            return {"status": True, "file_name": download_link,"message": "PDF reterived successfully!"}
+        
         merger = PdfWriter()
         
 
@@ -300,7 +305,7 @@ def multi_page_pdf_runner(id):
         final_pdf_name = file_name_gen
         merger.write(final_pdf_name)
         merger.close()
-
+        res = set_download_link(id,file_path=final_pdf_name)
         return {"status": True, "file_name": final_pdf_name,"message": "PDF created successfully!"}
     except Exception as e:
         return {"status": False, "file_name": None, "message": str(e)}

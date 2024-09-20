@@ -12,7 +12,8 @@ def format_card(doc):
         "status": doc["status"],
         "tags": doc["tags"],
         "timestamp": doc["timestamp"],
-        "halt_status": doc["halt_status"]
+        "halt_status": doc["halt_status"],
+        'download_link': doc.get('download_link','')
     }
 
 
@@ -33,6 +34,7 @@ def format_child_card(doc):
         "status": doc.get("status", ''),
         "timestamp": doc.get("timestamp", ''),
         "main_data": doc.get("main_data", {}),
+        'download_link': doc.get('download_link','')
     }
 
 

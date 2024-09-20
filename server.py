@@ -333,12 +333,11 @@ async def get_parent_by_id_api(request: IdRequest):
 #             raise HTTPException(status_code=404, detail="File not found.")
 #     else:
 #         raise HTTPException(status_code=400, detail=resp.get('message', 'Error generating PDF'))
-
+job_status = {}
 @app.post("/get_multipage_pdf/")
 async def get_multipage_pdf(request: IdRequest):
     print('Page Id', request.ids)
     resp = multi_page_pdf_runner(str(request.ids))
-
     if resp['status']:
         file_path = resp['file_name']
         if os.path.exists(file_path):

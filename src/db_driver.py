@@ -290,6 +290,37 @@ def get_parent_url_by_id(doc_id):
     return  None # Return None if no document is found
 
 
+def get_parent_download_link(doc_id):
+    query = {'_id': ObjectId(doc_id)}
+    projection = {'download_link': 1, '_id': 0}  # Project only the 'url' field and exclude '_id'
+    result = parent_docs_collection.find_one(query, projection)
+    
+    if result:
+        return result.get('url')
+    
+    return None
+         
+def set_download_link(id,file_path):
+    # Convert the string ID to ObjectId
+    query = {'_id': ObjectId(id)}
+    
+    # Define the update operation
+    update = {'$set': {'download_link': file_path}}
+    print(update)  # Optional: print the update operation for debugging
+
+    # Perform the update operation
+    result = processed_pages_collection.update_one(query, update)
+
+    if result.matched_count == 0:
+        return f"No document found with ID: {id}"
+    elif result.modified_count == 0:
+        return f"Document with ID: {id} was already in the desired filelink: {file_path}"
+    else:
+        return f"Document with ID: {id} updated successfully to filelink: {file_path}"
+
+
+
+
 
 def get_child_docs_by_id(doc_id):
     try:
