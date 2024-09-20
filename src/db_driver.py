@@ -310,7 +310,7 @@ def set_download_link(id,file_path):
 
     # Perform the update operation
     result = processed_pages_collection.update_one(query, update)
-
+    print('db_results',result.matched_count)
     if result.matched_count == 0:
         return f"No document found with ID: {id}"
     elif result.modified_count == 0:
