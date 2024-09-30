@@ -242,16 +242,16 @@ def get_corrected_content(page_content):
 
     """
 
-    # llm = ChatGroq(
-    #         model="llama-3.1-70b-versatile",
-    #         temperature=0,
-    #         max_tokens=None,
-    #         timeout=None,
-    #         max_retries=3,
-    #         # other params...
-    #     )
+    llm = ChatGroq(
+            model="llama-3.1-70b-versatile",
+            temperature=0,
+            max_tokens=None,
+            timeout=None,
+            max_retries=3,
+            # other params...
+        )
     
-    llm = ChatOpenAI(temperature=0.0, model_name="gpt-4o")
+    # llm = ChatOpenAI(temperature=0.0, model_name="gpt-4o")
     
 
     parser = PydanticOutputParser(pydantic_object=ResponseModel)
