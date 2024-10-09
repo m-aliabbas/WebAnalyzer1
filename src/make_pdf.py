@@ -64,7 +64,7 @@ def prepare_page_data(id):
         
         table_data = doc['main_data']['table_data']
         caution_words = doc['main_data']['caution_sentences']
-        if len(caution_words) <= 1:
+        if len(caution_words) == 0:
             caution_words = []
         df = pd.DataFrame(table_data)
         df['changes'] = df['highlighted'].apply(cleanify)
@@ -172,6 +172,7 @@ def create_pdf(file_name,data,caution_sentences,title,url):
         svg_path = "./src/imgs/discover-icon.svg"  # Replace with the actual path to your SVG image
         svg_drawing = svg2rlg(svg_path)
         svg_drawing.scale(1.0, 1.0)  # Adjust scaling as needed
+        print('Found Caution Sentences',len(caution_sentences))
         if len(caution_sentences) > 0:
             # Load the SVG image
             
@@ -254,6 +255,7 @@ def single_page_pdf_runner(id):
     
     file_name = generate_random_file_name_uuid(id)
     data , caution_words, title, url = prepare_page_data(id)
+    print("page data",data,caution_words)
     resp = create_pdf(file_name,data, caution_words, title, url) 
     # print('Response',resp)
     # print('='*20)
