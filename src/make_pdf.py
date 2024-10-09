@@ -61,20 +61,22 @@ def prepare_page_data(id):
         doc = format_child_card(doc)
         title = doc['title']
         url = doc['url']
-        
+        caution_words = [] 
         table_data = doc['main_data']['table_data']
         caution_words = doc['main_data']['caution_sentences']
         if len(caution_words) == 0:
             caution_words = []
-        df = pd.DataFrame(table_data)
-        df['changes'] = df['highlighted'].apply(cleanify)
-        df['changes'] = df['changes'].apply(cleanify)
-        filtered_df = df[df['originalContent'].str.split().str.len() > 2]
-        filtered_df = filtered_df[~filtered_df['originalContent'].str.contains(r'(\.\.+|,,+)$')]
-        filtered_df = filtered_df[~filtered_df['originalContent'].str.contains(r'^\s+$')]
-        data = filtered_df.to_dict('records')
-        print('=='*20)
-        print(data[0].keys())
+        data = []
+        if len(table_data) > 0:
+            df = pd.DataFrame(table_data)
+            df['changes'] = df['highlighted'].apply(cleanify)
+            df['changes'] = df['changes'].apply(cleanify)
+            filtered_df = df[df['originalContent'].str.split().str.len() > 2]
+            filtered_df = filtered_df[~filtered_df['originalContent'].str.contains(r'(\.\.+|,,+)$')]
+            filtered_df = filtered_df[~filtered_df['originalContent'].str.contains(r'^\s+$')]
+            data = filtered_df.to_dict('records')
+            print('=='*20)
+            print(data[0].keys())
         print('=='*20)
         print(caution_words)
         return data , caution_words, title, url
