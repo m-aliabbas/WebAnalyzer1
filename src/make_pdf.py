@@ -74,6 +74,7 @@ def prepare_page_data(id):
             filtered_df = df[df['originalContent'].str.split().str.len() > 2]
             filtered_df = filtered_df[~filtered_df['originalContent'].str.contains(r'(\.\.+|,,+)$')]
             filtered_df = filtered_df[~filtered_df['originalContent'].str.contains(r'^\s+$')]
+            filtered_df = filtered_df[~filtered_df.apply(detect_missing_spaces, axis=1)] 
             data = filtered_df.to_dict('records')
             print('=='*20)
             print(data[0].keys())

@@ -254,3 +254,22 @@ def preproces_content_new(html_page_content):
     cleaned_text = clean_text(preprocessed_text)
     return cleaned_text
 
+def detect_missing_spaces(row):
+    us_text = row["changes"]
+    uk_text = row["originalContent"]
+
+    # Check if any consecutive alphabetic characters appear in one text but not the other
+    for i in range(len(us_text) - 1):
+        if us_text[i].isalpha() and us_text[i + 1].isalpha():
+            us_pair = us_text[i:i + 2]
+            if us_pair not in uk_text and us_pair.replace(" ", "") in uk_text.replace(" ", ""):
+                return True
+
+    for i in range(len(uk_text) - 1):
+        if uk_text[i].isalpha() and uk_text[i + 1].isalpha():
+            uk_pair = uk_text[i:i + 2]
+            if uk_pair not in us_text and uk_pair.replace(" ", "") in us_text.replace(" ", ""):
+                return True
+
+    return False
+
