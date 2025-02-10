@@ -23,6 +23,14 @@ pdfmetrics.registerFont(TTFont('Aptos', './src/fonts/Fonts/Aptos.ttf'))
 pdfmetrics.registerFont(TTFont('AptosDisplay', './src/fonts/Fonts/Aptos-Display.ttf'))
 pdfmetrics.registerFont(TTFont('AptosDisplay-Bold', './src/fonts/Fonts/Aptos-Display-Bold.ttf'))
 
+styles = getSampleStyleSheet()
+styleN = ParagraphStyle(name='Normal', fontName='Aptos', fontSize=12)
+styleLN = ParagraphStyle(name='AptosDisplay', fontName='Aptos', fontSize=26)
+styleAptosDisplay = ParagraphStyle(name='AptosDisplay', fontName='AptosDisplay', fontSize=14)
+styleAptosDisplayBold = ParagraphStyle(name='AptosDisplay-Bold', fontName='AptosDisplay-Bold', fontSize=14)
+styleTitle = ParagraphStyle(name='Title', fontName='AptosDisplay-Bold', fontSize=24, spaceAfter=20)
+styleFooter = ParagraphStyle(name='Footer', fontName='Aptos', fontSize=12)
+styleAptosDisplay1 = ParagraphStyle(name='AptosDisplay', fontName='AptosDisplay', fontSize=12, alignment=4, leading=20)
 
 def create_square():
     drawing = Drawing(20, 20)
@@ -85,47 +93,73 @@ def prepare_page_data(id):
         print(e)
         return [], [], '', ''
 
+def create_intro_page(file_name):
+
+    try:
+        doc = SimpleDocTemplate(file_name, pagesize=letter, leftMargin=0.5*inch, rightMargin=0.5*inch, topMargin=0.5*inch, bottomMargin=0.5*inch)
+
+        elements = []
+        
+        # Logo and header setup
+        logo_path = "./src/imgs/image.png"
+        image = PILImage.open(logo_path)
+        original_width, original_height = image.size
+        max_width = 3 * inch
+        max_height = 1.5 * inch
+        scaling_factor = min(max_width / float(original_width), max_height / float(original_height))
+        final_width = original_width * scaling_factor
+        final_height = original_height * scaling_factor
+        
+        logo = Image(logo_path)
+        logo.drawWidth = final_width
+        logo.drawHeight = final_height
+        logo.hAlign = 'LEFT'
+        elements.append(logo)
+
+        # Current date and footer
+        current_datetime = datetime.datetime.now().strftime("%d/%m/%Y %H:%M GMT")
+        
+        
+        # Title
+        title = Paragraph(f'<font color="#f5c949"><b> Language Audit Report </b></font>', styleLN)
+        elements.append(title)
+        elements.append(Spacer(1, 0.5 * inch))
+
+        # Introduction text
+        text_page1 = """We have generated this report to identify areas within your website content that may contain spelling, grammatical, or potential GDC compliance issues. While not all highlighted points will require action, it is essential to remain mindful of the General Dental Council's (GDC) guidelines on ethical advertising."""
+
+        text_page2 = """The GDC strictly prohibits any claims or language that suggest superiority over other dental professionals, such as terms like "best" or "finest," unless these are appropriately contextualised and factual. Additionally, the term "specialist" is a protected title and may only be used by dentists listed on a GDC specialist register. Where this term appears, we encourage you to reconfirm its appropriate use. Terms like "expert" are also not permitted to describe dental professionals, as they may create unjustified expectations or mislead patients."""
+
+        text_page3 = """All advice within this report is provided in good faith to help ensure your content is accurate, professional, and fully compliant with GDC regulations."""
+
+        elements.append(Paragraph(text_page1, styleAptosDisplay1))
+        elements.append(Spacer(1, 0.2 * inch))
+        elements.append(Paragraph(text_page2, styleAptosDisplay1))
+        elements.append(Spacer(1, 0.2 * inch))
+        elements.append(Paragraph(text_page3, styleAptosDisplay1))
+        elements.append(Spacer(1, 0.2 * inch))
+
+        elements.append(Paragraph(current_datetime, styleAptosDisplay1))
+        
+        
+        doc.build(elements)
+
+        # print("PDF created successfully!")
+        return {"status":True,"msg": "PDF created successfully!", "file_name": file_name}
+    
+    except Exception as e:
+        return {"status": False,"msg": f"An error occurred: {e}","file_name": None}
 
 def create_pdf(file_name,data,caution_sentences,title,url):
     try:
         doc = SimpleDocTemplate(file_name, pagesize=letter, leftMargin=0.5*inch, rightMargin=0.5*inch, topMargin=0.5*inch, bottomMargin=0.5*inch)
-        styles = getSampleStyleSheet()
-        styleN = ParagraphStyle(name='Normal', fontName='Aptos', fontSize=12)
-        styleLN = ParagraphStyle(name='AptosDisplay', fontName='Aptos', fontSize=26)
-        styleAptosDisplay = ParagraphStyle(name='AptosDisplay', fontName='AptosDisplay', fontSize=14)
-        styleAptosDisplayBold = ParagraphStyle(name='AptosDisplay-Bold', fontName='AptosDisplay-Bold', fontSize=14)
-        styleTitle = ParagraphStyle(name='Title', fontName='AptosDisplay-Bold', fontSize=24, spaceAfter=20)
-        styleFooter = ParagraphStyle(name='Footer', fontName='Aptos', fontSize=12)
+        
 
         elements = []
 
         # Add the logo image at the top left
         logo_path = "./src/imgs/image.png"  # Replace with the actual path to your logo image
-        # logo = Image(logo_path)
         
-        # logo.drawWidth = 1 * inch
-        # logo.drawHeight = logo.drawWidth * 0.6  # Adjust height proportionally to maintain aspect ratio
-        # logo.hAlign = 'LEFT'
-        # elements.append(logo)
-        # Load the image using PIL to get its original dimensions
-        # image = PILImage.open(logo_path)
-        # original_width, original_height = image.size
-
-        # # Set the desired width
-        # desired_width = 1.5 * inch
-
-        # # Calculate the proportional height based on the original aspect ratio
-        # aspect_ratio = original_height / float(original_width)
-        # desired_height = desired_width * aspect_ratio
-
-        # # Create the image in the report
-        # logo = Image(logo_path)
-        # logo.drawWidth = desired_width
-        # logo.drawHeight = desired_height
-        # logo.hAlign = 'LEFT'
-
-        # # Add to elements list
-        # elements.append(logo)
         image = PILImage.open(logo_path)
         original_width, original_height = image.size
 
@@ -155,30 +189,41 @@ def create_pdf(file_name,data,caution_sentences,title,url):
 
         # Add the line with website link on the left and current date time on the right
         current_datetime = datetime.datetime.now().strftime("%d/%m/%Y %H:%M GMT")
+        # footer_data = [
+        #     [Paragraph(url, styleFooter), Spacer(2, 0.1*inch), Paragraph(current_datetime, styleFooter)]
+        # ]
+        # footer_table = Table(footer_data, colWidths=[2.5*inch, 3*inch, 2.5*inch])
+        # footer_table.setStyle(TableStyle([
+        #     ('ALIGN', (0, 0), (0, 0), 'LEFT'),
+        #     ('ALIGN', (2, 0), (2, 0), 'LEFT'),
+        #     ('VALIGN', (0, 0), (-1, -1), 'MIDDLE')
+        # ]))
+
         footer_data = [
-            [Paragraph(url, styleFooter), Spacer(1, 0.1*inch), Paragraph(current_datetime, styleFooter)]
+            [Paragraph(url, styleFooter), "", Paragraph(current_datetime, styleFooter)]
         ]
-        footer_table = Table(footer_data, colWidths=[2.5*inch, 3*inch, 2.5*inch])
+        footer_table = Table(footer_data, colWidths=[2.5*inch, 2.5*inch, 2.5*inch])
         footer_table.setStyle(TableStyle([
             ('ALIGN', (0, 0), (0, 0), 'LEFT'),
-            ('ALIGN', (2, 0), (2, 0), 'LEFT'),
+            ('ALIGN', (4, 0), (4, 0), 'RIGHT'),
             ('VALIGN', (0, 0), (-1, -1), 'MIDDLE')
         ]))
+
+        # url_date_table.setStyle(TableStyle([('ALIGN', (0,0), (-1,-1), 'LEFT')]))
         elements.append(footer_table)
         elements.append(Spacer(1, 0.2 * inch))
 
         # Add the page title below the logo
         elements.append(Spacer(1, 0.2 * inch))  # Adjusted upward
-        title = Paragraph("Language Audit", styleLN)
-        elements.append(title)
-        elements.append(Spacer(1, 0.5 * inch))  # Added gap
+        # title = Paragraph("Language Audit Report", styleLN)
+        
         svg_path = "./src/imgs/discover-icon.svg"  # Replace with the actual path to your SVG image
         svg_drawing = svg2rlg(svg_path)
         svg_drawing.scale(1.0, 1.0)  # Adjust scaling as needed
         print('Found Caution Sentences',len(caution_sentences))
         if len(caution_sentences) > 0:
             # Load the SVG image
-            
+             
 
             # Caution Sentences Header Data
             caution_header_data = [
@@ -290,9 +335,14 @@ def multi_page_pdf_runner(id):
         
         
         docs = get_child_docs_by_id(id)
-        
+
         docs = [format_child_card(doc) for doc in docs]
         pdf_name_list = []
+
+        INTRO_RANDOM = f"{uuid.uuid4()}_intro.pdf"
+        intro_page = create_intro_page(INTRO_RANDOM)
+
+        pdf_name_list.append(intro_page['file_name'])
         for doc in docs:
             if doc['status'] != 'done':
                 continue
@@ -304,6 +354,8 @@ def multi_page_pdf_runner(id):
                 pdf_name_list.append(resp['file_name'])
         
         # Merge the individual PDFs into a single PDF
+
+        
         
         print('pdf_name_list',pdf_name_list)
         for pdf_name in pdf_name_list:
@@ -318,8 +370,7 @@ def multi_page_pdf_runner(id):
         return {"status": False, "file_name": None, "message": str(e)}
 if __name__ == '__main__':
 
-    # resp = single_page_pdf_runner('66bad725df6dfacfb2cf4294')
-    # print(resp)
 
-    resp = multi_page_pdf_runner('66bad711be364485a47b7301')
+    resp = multi_page_pdf_runner('67aa170945b6861d8b1e33c0')
     print(resp)
+    
