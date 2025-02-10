@@ -243,7 +243,7 @@ def get_corrected_content(page_content):
     """
 
     llm = ChatGroq(
-            model="llama-3.1-70b-versatile",
+            model="llama-3.3-70b-versatile",
             temperature=0,
             max_tokens=None,
             timeout=None,
